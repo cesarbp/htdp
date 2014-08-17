@@ -94,11 +94,114 @@ true false
 (place-image <> 50 30 (empty-scene 100 100))
 |#
 
+;; -------------------------------------------------------------------
+
 (require 2htdp/image)
 (require 2htdp/universe)
 
 (define (create-rocket-scene height)
   (place-image <> 50 height (empty-scene 100 100)))
   
-(create-rocket-scene 0)
-(animate create-rocket-scene)
+; (create-rocket-scene 0)
+; (animate create-rocket-scene)
+
+;         +1 if x > 0
+; f(x) =   0 if x = 0
+;         -1 if x < 0
+
+(define (sign x)
+  (cond
+    [(> x 0)   1]
+    [(= x 0)   0]
+    [(< x 0)  -1]))
+    
+; (sign 10)
+; (sign -5)
+; (sign 0)
+
+(define (create-rocket-scene.v2 height)
+  (cond
+    [(<= height 100)
+     (place-image <> 50 height (empty-scene 100 100))]
+    [(> height 100)
+     (place-image <> 50 100 (empty-scene 100 100))]))
+     
+; (animate create-rocket-scene.v2)
+
+; (create-rocket-scene.v2 5000)
+
+; (- 100 (/ (image-height <>) 2))
+
+; (place-image <> 50 (- 100 (/ (image-height <>) 2))
+;              (empty-scene 100 100))
+
+(define (create-rocket-scene.v3 height)
+  (cond
+    [(<= height 79)
+     (place-image <> 50 height (empty-scene 100 100))]
+    [(> height 79)
+     (place-image <> 50 79 (empty-scene 100 100))]))
+
+; (animate create-rocket-scene.v3)
+
+(define HEIGHT   100)
+(define WIDTH    100)
+
+(define ROCKET <>)
+(define ROCKET-X (/ WIDTH 2))
+(define ROCKET-CENTER-TO-BOTTOM (- HEIGHT
+                                   (/ (image-height ROCKET) 2)))
+
+(define (create-rocket-scene.v4 h)
+  (cond
+    [(<= h ROCKET-CENTER-TO-BOTTOM)
+     (place-image ROCKET ROCKET-X h (empty-scene WIDTH HEIGHT))]
+    [(> h ROCKET-CENTER-TO-BOTTOM)
+     (place-image ROCKET ROCKET-X ROCKET-CENTER-TO-BOTTOM
+                  (empty-scene WIDTH HEIGHT))]))
+
+; (animate create-rocket-scene.v4)
+
+(define UFO
+  (overlay (circle 10 "solid" "green")
+           (rectangle 40 4 "solid" "green")))
+(define UFO-X  (/ WIDTH 2))
+(define UFO-CENTER-TO-BOTTOM (- HEIGHT
+                                (/ (image-height UFO) 2)))
+
+(define (create-ufo-scene h)
+  (cond [(<= h UFO-CENTER-TO-BOTTOM)
+         (place-image UFO UFO-X h (empty-scene WIDTH HEIGHT))]
+        [(> h UFO-CENTER-TO-BOTTOM)
+         (place-image UFO UFO-X UFO-CENTER-TO-BOTTOM
+                      (empty-scene WIDTH HEIGHT))]))
+
+; (animate create-ufo-scene)
+
+;; pendiente
+
+; d = v * t - 1/2 a * t^2
+; d(t) = v * t - 1/2 a * t^2
+
+; (require 2htdp/image)
+; (require 2htdp/universe)
+
+(define VELOCITY 20)
+(define DECELERATION 1)
+(define MTSCN (empty-scene WIDTH HEIGHT))
+
+(define (distance t)
+  (- (* VELOCITY t)
+     (* 1/2 DECELERATION (sqr t))))
+
+(define (create-rocket-scene.v6 t)
+  (cond
+    [(<= (distance t) ROCKET-CENTER-TO-BOTTOM)
+     (place-image ROCKET ROCKET-X (distance t) MTSCN)]
+    [(> (distance t) ROCKET-CENTER-TO-BOTTOM)
+     (place-image ROCKET ROCKET-X ROCKET-CENTER-TO-BOTTOM MTSCN)]))
+
+(animate create-rocket-scene.v6)
+
+
+
